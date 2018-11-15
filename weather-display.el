@@ -24,8 +24,18 @@
   (seq-filter (lambda (x) (> (cdr x) now))
               (weather--all-sun-data weather-data)))
 
+(defun weather--time-format-string (seconds)
+  (let ((seconds (truncate seconds)))
+   (apply 'concat (seq-filter (lambda (x) (not (null x)))
+                              (list (when (>= seconds 3600)
+                                      "%H ")
+                                    (when (and (> seconds 60) (not (= 0 (mod seconds 3600))))
+                                      "%M ")
+                                    (when (not (= 0 (mod seconds 60)))
+                                      "%S"))))))
+
 (defun weather--format-time (seconds)
-  (format "%s\"" seconds))
+  (format-seconds (weather--time-format-string seconds) seconds))
 
 (defun weather--present-sun-event (now sun-event)
   (insert (capitalize (car sun-event))
@@ -42,7 +52,5 @@
   (insert city-name " weather:\n")
   (insert (format "%d degrees Fahrenheit\n" (weather--get-temp weather-data)))
   (insert (weather--present-sun-data (float-time) weather-data)))
-
-
 
 (provide 'weather-display)
