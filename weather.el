@@ -9,15 +9,25 @@
     (buffer-substring (line-beginning-position)
                       (line-end-position))))
 
-(defun weather--get-content-buffer (city-name country-code)
+(defun weather--get-content-buffer (city-name &optional country-code)
   (let ((url-request-method "POST"))
     (url-retrieve-synchronously
-     (format "http://api.openweathermap.org/data/2.5/weather?q=%s,%s&appid=%s" city-name country-code (weather--read-key)))))
+     (if country-code
+         (format "http://api.openweathermap.org/data/2.5/weather?q=%s,%s&appid=%s" city-name country-code (weather--read-key))
+       (format "http://api.openweathermap.org/data/2.5/weather?q=%s&appid=%s" city-name (weather--read-key))))))
 
-(defun weather--get (city-name country-code)
+(defun weather--get (city-name &optional country-code)
   (with-current-buffer (weather--get-content-buffer city-name country-code)
     (goto-char url-http-end-of-headers)
     (forward-line)
     (let ((result (buffer-substring (point) (point-max))))
       (kill-buffer)
       (json-read-from-string result))))
+
+(defun weather--split-location (location)
+  (split-string location)
+  )
+
+(defun weather (location)
+  (interactive "MWhere are you? ")
+  (apply 'weather--get (weather--split-location location)))
