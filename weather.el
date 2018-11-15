@@ -10,4 +10,4 @@
   (erase-buffer)
   (let ((split-location (split-string location)))
     (weather-display (car split-location)
-                     (apply 'weather--get split-location))))
+                     (apply 'weather-get split-location))))
