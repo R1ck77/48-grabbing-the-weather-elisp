@@ -49,7 +49,7 @@
                           (weather--interesting-sun-data now weather-data))))
 
 (defun weather-display (city-name weather-data)
-  (insert city-name " weather:\n")
+  (insert city-name "' weather:\n")
   (insert (format "%d degrees Fahrenheit\n" (weather--get-temp weather-data)))
   (insert (weather--present-sun-data (float-time) weather-data)))
 
