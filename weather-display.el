@@ -95,6 +95,10 @@
           (format "wind %skm/h %s\n" speed (weather--present-direction deg))
         "no wind\n"))))
 
+(defun weather--kill-buffer ()
+  (interactive)
+  (kill-buffer))
+
 (defun weather-display (city-name weather-data)
   (insert city-name "'s weather: ")
   (insert (format "%s\n%d℃  with %d%% of humidity\n"
@@ -104,6 +108,7 @@
   (insert (weather--present-wind-data weather-data))
   (insert (weather--present-sun-data (float-time) weather-data))
   (setq buffer-read-only t)
-  (goto-char (point-min)))
+  (goto-char (point-min))
+  (local-set-key (kbd "q") 'weather--kill-buffer))
 
 (provide 'weather-display)
