@@ -7,14 +7,34 @@
       (setq properties (rest properties)))
     current))
 
-(defun weather--get-temp (weather-data)
+(defun weather--get-temperature (weather-data)
   (weather--hierarchic-get weather-data '(main temp)))
+
+(defun weather--get-humidity (weather-data)
+  (weather--hierarchic-get weather-data '(main humidity)))
+
+(defun weather--get-condition (weather-data)
+  (alist-get 'description
+             (aref (weather--hierarchic-get weather-data
+                                            '(weather))
+                   0)))
 
 (defun weather--get-sunrise (weather-data)
   (weather--hierarchic-get weather-data '(sys sunrise)))
 
 (defun weather--get-sunset (weather-data)
   (weather--hierarchic-get weather-data '(sys sunset)))
+
+(defun weather--convert-speed (meters-per-seconds)
+  (/ (* meters-per-seconds
+        3600)
+     1000))
+
+(defun weather--get-wind-data (weather-data)
+  "Returns (wind km/h . direction)"
+  (let ((wind-alist (alist-get 'wind weather-data)))
+    (cons (weather--convert-speed (alist-get 'speed wind-alist))
+          (alist-get 'deg wind-alist))))
 
 (defun weather--all-sun-data (weather-data)
   (list (cons "sunrise" (weather--get-sunrise weather-data))
@@ -48,9 +68,40 @@
                             (weather--present-sun-event now sun-event))
                           (weather--interesting-sun-data now weather-data))))
 
+(defconst weather--directions '(( 22.5 . "N" )
+                                ( 67.5 . "NE")
+                                (112.5 . "E" )
+                                (157.5 . "SE")
+                                (202.5 . "S" )
+                                (247.5 . "SW")
+                                (292.5 . "W" )
+                                (337.5 . "NW")
+                                (382.5 . "N")))
+
+(defun weather--present-direction (deg)
+  (or (first
+       (seq-filter (lambda (x)
+                     (not (null x)))
+                   (seq-map (lambda (x)
+                              (if (< deg (car x)) (cdr x)))
+                            weather--directions)))
+      "N"))
+
+(defun weather--present-wind-data (weather-data)
+  (let ((wind-data (weather--get-wind-data weather-data)))
+    (let ((speed (car wind-data))
+          (deg (cdr wind-data)))
+      (if (>= speed 0.5)
+          (format "wind %skm/h %s" speed (weather--present-direction deg))
+        "no wind"))))
+
 (defun weather-display (city-name weather-data)
-  (insert city-name "' weather:\n")
-  (insert (format "%d degrees Fahrenheit\n" (weather--get-temp weather-data)))
+  (insert city-name "'s weather: ")
+  (insert (format "%s\n%d℃  with %d%% of humidity\n"
+                  (weather--get-condition weather-data)
+                  (weather--get-temperature weather-data)
+                  (weather--get-humidity weather-data)))
+  (insert (weather--present-wind-data (weather-data)))
   (insert (weather--present-sun-data (float-time) weather-data)))
 
 (provide 'weather-display)
