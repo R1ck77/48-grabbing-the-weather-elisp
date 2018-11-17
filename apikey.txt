@@ -1,1 +1,1 @@
-Put your API key in this file
+Replace this line with your API key (get one at https://openweathermap.org)
