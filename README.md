@@ -6,7 +6,7 @@ The basic goal and a couple of challenges have been solved (I found the remainin
 
 ### Usage
 
-You need a [openWeatherMap](https://openweathermap.org) API key in order to use the software: save it as the first line of ``apikey.txt`` (no extra spaces or characters on that line!).
+You need an [openWeatherMap](https://openweathermap.org) API key in order to use the software: save it as the first line of ``apikey.txt`` (no extra spaces or characters on that line!).
 
 Eval ``debug.el``: it adds the current path to the package search path and requires the ``weather.el`` module, then execute the command ``M-x weather``.
 
