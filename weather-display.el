@@ -102,6 +102,8 @@
                   (weather--get-temperature weather-data)
                   (weather--get-humidity weather-data)))
   (insert (weather--present-wind-data weather-data))
-  (insert (weather--present-sun-data (float-time) weather-data)))
+  (insert (weather--present-sun-data (float-time) weather-data))
+  (setq buffer-read-only t)
+  (goto-char (point-min)))
 
 (provide 'weather-display)
