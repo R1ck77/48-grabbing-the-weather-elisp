@@ -2,6 +2,8 @@
 (require 'weather-api)
 (require 'weather-display)
 
+
+
 (defconst weather--buffer-name "* Weather *")
 
 (defun weather (location)
@@ -11,3 +13,5 @@
   (let ((split-location (split-string location)))
     (weather-display (car split-location)
                      (apply 'weather-get split-location))))
+
+(provide 'weather)
