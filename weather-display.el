@@ -92,8 +92,8 @@
     (let ((speed (car wind-data))
           (deg (cdr wind-data)))
       (if (>= speed 0.5)
-          (format "wind %skm/h %s" speed (weather--present-direction deg))
-        "no wind"))))
+          (format "wind %skm/h %s\n" speed (weather--present-direction deg))
+        "no wind\n"))))
 
 (defun weather-display (city-name weather-data)
   (insert city-name "'s weather: ")
@@ -101,7 +101,7 @@
                   (weather--get-condition weather-data)
                   (weather--get-temperature weather-data)
                   (weather--get-humidity weather-data)))
-  (insert (weather--present-wind-data (weather-data)))
+  (insert (weather--present-wind-data weather-data))
   (insert (weather--present-sun-data (float-time) weather-data)))
 
 (provide 'weather-display)
